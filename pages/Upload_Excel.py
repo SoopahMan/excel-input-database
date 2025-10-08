@@ -212,16 +212,12 @@ if uploaded_file:
                         except Exception as e:
                             st.warning(f"⚠️ Gagal membuat FK `{local_col}` di `{table_name}`: {e}")
 
-
         st.success("🎉 Semua tabel dan relasi berhasil diimpor!")
-        st.subheader("🔄 Tambah Lagi / Reset Session")
-
-if st.button("Tambah Lagi"):
-    # Reset semua session state terkait sheet, combined, PK, FK
-    for key in ['sheet_data_selected', 'combined_sheets', 'fk_selection']:
-        if key in st.session_state:
-            del st.session_state[key]
-    st.session_state.clear()  # hapus semua state (opsional jika ingin reset tertentu)
-    st.rerun()
-  # hapus semua state (opsional jika ingin reset tertentu)
-
+        
+        # Reset session state setelah import berhasil
+        for key in ['sheet_data_selected', 'combined_sheets', 'fk_selection', 'pk_selection']:
+            if key in st.session_state:
+                st.session_state[key] = {}
+        
+        # Refresh halaman
+        st.rerun()

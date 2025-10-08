@@ -2,12 +2,16 @@ import streamlit as st
 import pandas as pd
 from sqlalchemy import create_engine, text, inspect
 import pymysql
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 st.set_page_config(page_title="Manage Database", layout="wide")
 st.title("🗄️ Manage Database")
 
-db_url = st.text_input("Database URL", value="mysql+pymysql://root:@localhost/bss")
-
+# db_url = st.text_input("Database URL", value="mysql+pymysql://root:@localhost/bss")
+db_url = os.getenv("DB_URL")
 if db_url:
     try:
         engine = create_engine(db_url)
