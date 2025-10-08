@@ -3,25 +3,12 @@ import pandas as pd
 from sqlalchemy import create_engine, text
 from collections import defaultdict
 import re
+import os
 from itertools import combinations
-# from helpers import normalize_col, safe_convert_for_key, clean_table_name
+from helpers import normalize_col, safe_convert_for_key, clean_table_name
+from dotenv import load_dotenv
 
-# -------------------------------
-# 🔧 HELPER FUNCTIONS
-# -------------------------------
-def normalize_col(col: str) -> str:
-    """Ubah nama kolom jadi bentuk seragam untuk perbandingan FK"""
-    return re.sub(r'[^a-z0-9]', '', col.lower())
-
-def safe_convert_for_key(df: pd.DataFrame, col: str) -> pd.DataFrame:
-    """Konversi kolom ke string agar bisa jadi PK/FK"""
-    if not pd.api.types.is_numeric_dtype(df[col]) and not pd.api.types.is_datetime64_any_dtype(df[col]):
-        df[col] = df[col].astype(str)
-    return df
-
-def clean_table_name(name: str) -> str:
-    """Membersihkan nama tabel untuk database"""
-    return re.sub(r'[^a-z0-9_]', '_', name.lower())
+load_dotenv()
 
 # -------------------------------
 # 🔹 SESSION STATE INITIALIZATION
@@ -34,12 +21,15 @@ if 'fk_selection' not in st.session_state:
     st.session_state['fk_selection'] = {}
 if 'pk_selection' not in st.session_state:
     st.session_state['pk_selection'] = {}
+db_url = os.getenv("DB_URL")
 
 # -------------------------------
 # 📂 UPLOAD FILE
 # -------------------------------
 uploaded_file = st.file_uploader("Upload file Excel (.xlsx)", type=["xlsx"])
-db_url = st.text_input("Database URL", value="mysql+pymysql://root:@localhost/bss")
+if db_url is None:
+    db_url = st.text_input("Database URL")
+    
 prefix_global = st.text_input("Prefix nama tabel", value="case1_")
 
 if uploaded_file:
