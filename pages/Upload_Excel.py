@@ -7,6 +7,7 @@ import os
 from itertools import combinations
 from helpers import normalize_col, safe_convert_for_key, clean_table_name
 from dotenv import load_dotenv
+import streamlit as st
 
 load_dotenv()
 
@@ -215,9 +216,8 @@ if uploaded_file:
         st.success("🎉 Semua tabel dan relasi berhasil diimpor!")
         
         # Reset session state setelah import berhasil
+        st.toast("✅ Data berhasil disimpan ke database!", icon="🎉")
+
         for key in ['sheet_data_selected', 'combined_sheets', 'fk_selection', 'pk_selection']:
             if key in st.session_state:
                 st.session_state[key] = {}
-        
-        # Refresh halaman
-        st.rerun()
